@@ -1,9 +1,12 @@
-var builder = WebApplication.CreateBuilder(args);
+using AzureWithDotnet.Data;
+using Microsoft.EntityFrameworkCore;
 
-builder.Services.AddApplicationInsightsTelemetry();
+var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
-
+var connectionString = builder.Configuration.GetConnectionString("AzureSqlConnection");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["ApplicationInsights.ConnectionString"]);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
